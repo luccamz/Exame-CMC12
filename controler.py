@@ -14,8 +14,8 @@ class Controler:
 
     def generate_tfs(self) -> None:
         self.lead = mat.tf([self.T, 1.], [self.alpha*self.T, 1.0])
-        self.PD = mat.tf([self.Kd, self.Kp], [1.])
-        self.C = self.lead*self.PD
+        self.P = mat.tf([self.Kp], [1.])
+        self.C = self.lead*self.P
 
     def update(self, new_gains: dict)-> None:
         for k in self.gains:
