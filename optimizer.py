@@ -1,14 +1,10 @@
-import cma
-from scipy.optimize import minimize # method = 'Nelder-Mead'
 from requirements import Requirements
-from numpy.typing import NDArray, Float64
-from typing import Tuple
 from system import System
-from control.matlab import *
+import control.matlab as mat
 
 
 class Optimizer:
-    def __init__(self, optimizer, initial_guess: Tuple[NDArray[Float64]]) -> None:
+    def __init__(self, optimizer, initial_guess: tuple) -> None:
         self.optimizer = optimizer
         self.initial_guess = initial_guess
 
@@ -19,10 +15,9 @@ class Optimizer:
         pass
 
     def make_obj_func(self, reqs: Requirements, system: System) -> callable:
-        J = lambda x: (
+        def J(x):
             system.update_controler(x)
-            (bandwidth(system.Gf) - reqs.wb)**2 + (margin(system.Ga)[1] - reqs.pm)**2
-            )
+            return (mat.bandwidth(system.Gf) - reqs.wb)**2 + (mat.margin(system.Ga)[1] - reqs.pm)**2
         return J
         
         

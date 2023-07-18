@@ -1,6 +1,7 @@
-from control.matlab import *
+import control.matlab as mat
 import json
 from plant import Plant
+from requirements import Requirements
 
 class Controler:
     def __init__(self, filepath: str, dt: float) -> None:
@@ -12,8 +13,8 @@ class Controler:
         self.generate_tfs()
 
     def generate_tfs(self) -> None:
-        self.lead = tf([self.T, 1.], [self.alpha*self.T, 1.0], self.dt)
-        self.PD = tf([self.Kp, self.Kd], [1.], self.dt)
+        self.lead = mat.tf([self.T, 1.], [self.alpha*self.T, 1.0])
+        self.PD = mat.tf([self.Kd, self.Kp], [1.])
         self.C = self.lead*self.PD
 
     def update(self, new_gains: dict)-> None:
@@ -31,5 +32,5 @@ class Controler:
         with open(filepath,"w") as f:
             json.dump({k: d[k] for k in self.gains}, f)
 
-    def project_analytical(self, plant: Plant, reqs) -> None:
+    def project_analytical(self, plant: Plant, reqs: Requirements) -> None:
         pass
