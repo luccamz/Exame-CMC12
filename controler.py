@@ -1,5 +1,6 @@
 from control.matlab import *
 import json
+from plant import Plant
 
 class Controler:
     def __init__(self, filepath: str, dt: float) -> None:
@@ -11,7 +12,6 @@ class Controler:
         self.PD = tf([self.Kp, self.Kd], [1.], self.dt)
         self.C = self.lead*self.PD
 
-
     def load(self, filepath: str) -> dict:
         with open(filepath, "r") as f:
             d =  json.load(f)
@@ -22,3 +22,6 @@ class Controler:
         d = vars(self)
         with open(filepath,"w") as f:
             json.dump({k: d[k] for k in gains}, f)
+
+    def project_analytical(self, plant: Plant, reqs) -> None:
+        pass
