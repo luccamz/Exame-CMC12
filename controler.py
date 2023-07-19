@@ -80,7 +80,7 @@ class Controler:
         m = plant.m
         b = plant.b
         Jeq = J + m*R**2
-        x = roots([R**2, 2*Jeq*wb ,-(Jeq*wb**2)**2-(wb*b)**2])
+        x = roots([R**2, 2*Jeq*wb**2*R ,-(Jeq*wb**2)**2-(wb*b)**2])
         x.sort()
         self.Kp = x[1]
         y = roots([Jeq**2, b**2, -(self.Kp*R)**2])
