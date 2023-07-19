@@ -9,7 +9,7 @@ import control.matlab as mat
 import matplotlib.pyplot as plt
 import numpy as np
 
-ctrl = Controler("initial.json", 1e-4)
+ctrl = Controler("gains/initial.json", 1e-4)
 plant = Plant(1., 1.0, 1.0, 0.001)
 sys = System(ctrl, plant)
 opt = Optimizer(cma.fmin2, [ctrl.get_gains(), 100])
@@ -55,7 +55,7 @@ def benchmark(algo: str, wb: float, pm: float, t = np.linspace(0.,0.7,1000)):
     plt.xlabel('tempo (s)')
     plt.ylabel(r'$\theta$ (rad)')
     plt.savefig('step_response_'+algo+'_wb{}'.format(reqs.wb)+'.eps', bbox_inches='tight')
-    ctrl.save('gains_'+algo+'_wb{}'.format(reqs.wb)+'.json')
+    ctrl.save('gains/gains_'+algo+'_wb{}'.format(reqs.wb)+'.json')
 
 for wb in [50, 250, 500]:
     benchmark('none', wb, 60, t = np.linspace(0.,10,int(1e4)))
