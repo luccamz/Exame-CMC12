@@ -44,13 +44,13 @@ class Controler:
         m = plant.m
         b = plant.b
         Jeq = J + m*R**2
-        x = roots([1, 2*Jeq*wb ,-(Jeq*wb**2)**2-(wb*b)**2])
+        x = roots([R**2, 2*Jeq*wb ,-(Jeq*wb**2)**2-(wb*b)**2])
         x.sort()
         self.Kp = x[1]
         y = roots([Jeq**2, b**2, -self.Kp**2])
         y.sort()
         wcp = sqrt(y[1])
-        PMa=angle(self.Kp/(-Jeq*wcp**2+b*1j*wcp))+pi
+        PMa=angle(-Jeq*wcp-b*1j)+pi
         phimax=PM*pi/180-PMa
         self.alpha=(1-sin(phimax))/(1+sin(phimax))
         self.T = 1/(wcp*sqrt(self.alpha))
