@@ -83,7 +83,7 @@ class Controler:
         x = roots([R**2, 2*Jeq*wb ,-(Jeq*wb**2)**2-(wb*b)**2])
         x.sort()
         self.Kp = x[1]
-        y = roots([Jeq**2, b**2, -self.Kp**2])
+        y = roots([Jeq**2, b**2, -(self.Kp*R)**2])
         y.sort()
         wcp = sqrt(y[1])
         PMa=angle(-Jeq*wcp-b*1j)+pi

@@ -52,24 +52,20 @@ def benchmark(algo: str, wb: float, pm: float, t = np.linspace(0.,0.7,1000)):
         t (NumPy array, optional): the timespan along which to generate the step response. Defaults to np.linspace(0.,0.7,1000).
     """
     reqs = Requirements(wb = wb, pm = pm, err = 0.0)
-    ctrl.project_analytical(plant, reqs) # obtain analytical gains for initial guess
+    sys.controler.project_analytical(plant, reqs) # obtain analytical gains for initial guess
+    sys.generate_tfs()
     if algo.lower() == 'cma':
+        algo = 'CMA'
         opt.restart(cma_es_opt, [ctrl.get_gains(), 1e4])
         opt.minimize(reqs, sys)
     elif algo.lower() in ['nelder-mead', 'nd']:
         algo = 'ND'
         opt.restart(nelder_mead_opt, [ctrl.get_gains()])
         opt.minimize(reqs, sys)
+    print("Algorithm: " + algo)
     # optimized system's parameters
     print("wb: {:.2f}".format(mat.bandwidth(sys.Gf)))
     print("PM: {:.2f}".format(mat.margin(sys.Ga)[1]))
-    # plots the loss history of the optimization
-    plt.figure()
-    plt.plot(opt.loss_history)
-    plt.title('Fitness History')
-    plt.ylabel('Fitness')
-    plt.xlabel('# Iterations')
-    plt.savefig('err_hist_'+algo+'_wb{}'.format(reqs.wb)+'.eps', bbox_inches='tight')
     #optimized gains
     print("Kp: ", ctrl.Kp)
     print("alpha: ",ctrl.alpha)
@@ -89,6 +85,16 @@ def benchmark(algo: str, wb: float, pm: float, t = np.linspace(0.,0.7,1000)):
     plt.xlabel('tempo (s)')
     plt.ylabel(r'$\theta$ (rad)')
     plt.savefig('step_response_'+algo+'_wb{}'.format(reqs.wb)+'.eps', bbox_inches='tight')
+    if not (algo.lower() == 'cma' or algo == 'ND'):
+        return
+    # plots the loss history of the optimization
+    plt.figure()
+    plt.plot(opt.loss_history)
+    plt.title('Fitness History')
+    plt.ylabel('Fitness')
+    plt.xlabel('# Iterations')
+    plt.savefig('err_hist_'+algo+'_wb{}'.format(reqs.wb)+'.eps', bbox_inches='tight')
 
 for wb in [50, 250, 500]:
-    benchmark('none', wb, 60, t = np.linspace(0.,10,int(1e4)))
+    for algo in ['CMA', 'ND', 'none']:
+        benchmark(algo, wb, 60)

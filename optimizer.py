@@ -1,7 +1,7 @@
 from requirements import Requirements
 from system import System
 import control.matlab as mat
-
+from numpy import Inf
 
 class Optimizer:
     """Creates an interface for the use of different optimization algorithms.
@@ -70,9 +70,11 @@ class Optimizer:
         """
         def J(x):
             system.update_controler(x) # in-place update
-            return  (
-                    (mat.bandwidth(system.Gf) - reqs.wb - reqs.delta_wb)**2 
-                    +(mat.margin(system.Ga)[1] - reqs.pm - reqs.delta_pm)**2
-                    )
+            try:
+                result = ((mat.bandwidth(system.Gf) - reqs.wb - reqs.delta_wb)**2 
+                         +(mat.margin(system.Ga)[1] - reqs.pm - reqs.delta_pm)**2)
+            except:
+                result = Inf
+            return result
         self.J = J
         
