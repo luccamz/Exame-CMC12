@@ -65,7 +65,13 @@ def benchmark(algo: str, wb: float, pm: float, t = np.linspace(0.,0.7,1000)):
     print("Algorithm: " + algo)
     # optimized system's parameters
     print("wb: {:.2f}".format(mat.bandwidth(sys.Gf)))
-    print("PM: {:.2f}".format(mat.margin(sys.Ga)[1]))
+    _, PM, _, wcp = mat.margin(sys.Ga)
+    print("PM: {:.2f}".format(PM))
+    # bode plot
+    fig, axs = plt.subplots(2)
+    mag, phase, omega = mat.bode(sys.Gf)
+    plt.savefig('bode_plot_'+algo+'_wb{}'.format(reqs.wb)+'.eps', bbox_inches='tight')
+
     #optimized gains
     print("Kp: ", ctrl.Kp)
     print("alpha: ",ctrl.alpha)
@@ -96,5 +102,5 @@ def benchmark(algo: str, wb: float, pm: float, t = np.linspace(0.,0.7,1000)):
     plt.savefig('err_hist_'+algo+'_wb{}'.format(reqs.wb)+'.eps', bbox_inches='tight')
 
 for wb in [50, 250, 500]:
-    for algo in ['CMA', 'ND', 'none']:
+    for algo in ['CMA','ND','none']:
         benchmark(algo, wb, 60)
